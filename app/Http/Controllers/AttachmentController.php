@@ -12,7 +12,11 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class AttachmentController extends Controller
 {
-    private const DISK = 'local';
+    /** Storage disk for attachments — `local` in dev, set FILESYSTEM_DISK=s3 in production/serverless. */
+    private function disk(): string
+    {
+        return config('filesystems.default');
+    }
 
     public function store(Request $request, Document $record): RedirectResponse
     {
@@ -21,7 +25,7 @@ class AttachmentController extends Controller
         ]);
 
         $file = $request->file('file');
-        $path = $file->store("attachments/{$record->id}", self::DISK);
+        $path = $file->store("attachments/{$record->id}", $this->disk());
 
         $attachment = $record->attachments()->create([
             'original_name' => $file->getClientOriginalName(),
@@ -38,17 +42,17 @@ class AttachmentController extends Controller
 
     public function download(DocumentAttachment $attachment): StreamedResponse
     {
-        abort_unless(Storage::disk(self::DISK)->exists($attachment->path), 404);
+        abort_unless(Storage::disk($this->disk())->exists($attachment->path), 404);
 
         $attachment->increment('download_count');
         ActivityLog::record($attachment->document, 'downloaded', "Attachment downloaded: {$attachment->original_name}");
 
-        return Storage::disk(self::DISK)->download($attachment->path, $attachment->original_name);
+        return Storage::disk($this->disk())->download($attachment->path, $attachment->original_name);
     }
 
     public function destroy(DocumentAttachment $attachment): RedirectResponse
     {
-        Storage::disk(self::DISK)->delete($attachment->path);
+        Storage::disk($this->disk())->delete($attachment->path);
         $document = $attachment->document;
         $name = $attachment->original_name;
         $attachment->delete();

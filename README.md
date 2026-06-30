@@ -57,6 +57,7 @@ Public self-registration is disabled; administrators create users. The seed load
 
 - **[docs/cicc-storage-system.md](docs/cicc-storage-system.md)** — full system documentation (setup, roles, modules, data model, attachments/versions/audit, key files, testing).
 - [docs/document-types.md](docs/document-types.md) · [docs/documents-and-dashboard.md](docs/documents-and-dashboard.md) · [docs/document-types-guide.md](docs/document-types-guide.md) · [docs/document-types-checklist.md](docs/document-types-checklist.md)
+- **[docs/deploy-vercel.md](docs/deploy-vercel.md)** — deploying to Vercel (vercel-php runtime + external MySQL + S3).
 
 ## Tests
 
