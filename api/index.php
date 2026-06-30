@@ -22,4 +22,16 @@ foreach ([
     }
 }
 
+/*
+ * Self-contained demo database: on a read-only serverless filesystem, copy the
+ * bundled, pre-seeded SQLite file into the writable /tmp on cold start. Set
+ * DB_CONNECTION=sqlite and DB_DATABASE=/tmp/database.sqlite in the Vercel env.
+ * Writes work per-instance and reset on the next cold start (fine for a demo).
+ */
+$demo = __DIR__.'/../database/demo.sqlite';
+$live = '/tmp/database.sqlite';
+if (! file_exists($live) && file_exists($demo)) {
+    @copy($demo, $live);
+}
+
 require __DIR__.'/../public/index.php';

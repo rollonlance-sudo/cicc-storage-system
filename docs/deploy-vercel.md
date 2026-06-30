@@ -7,6 +7,37 @@
 > attachments). Cold starts and the 250 MB function limit apply. For a simpler,
 > fully-supported deploy, prefer Railway, Render, Fly.io, or Laravel Cloud.
 
+## Quickest path — self-contained demo (no external DB/S3) ⭐
+
+For a **view-only demo**, the repo ships a pre-seeded SQLite database
+(`database/demo.sqlite`). `api/index.php` copies it to the writable `/tmp` on
+each cold start, so the app runs on Vercel with **no external services**. Writes
+work per-instance and reset on the next cold start — perfect for viewing.
+
+1. **Import the repo** at vercel.com → *Add New → Project* → import
+   `rollonlance-sudo/cicc-storage-system` (the public copy). Framework preset: **Other**.
+2. **Add these Environment Variables** (Production):
+
+   ```
+   APP_KEY=base64:8OITcfJG937RyZuCVUi5gYxDakvXPE5uwryALO7/Y6g=
+   APP_ENV=production
+   APP_DEBUG=false
+   LOG_CHANNEL=stderr
+   DB_CONNECTION=sqlite
+   DB_DATABASE=/tmp/database.sqlite
+   SESSION_DRIVER=cookie
+   CACHE_STORE=array
+   QUEUE_CONNECTION=sync
+   FILESYSTEM_DISK=local
+   ```
+   (Regenerate APP_KEY anytime with `php artisan key:generate --show`.)
+3. **Deploy.** Log in as `admin@storagesystem.test` / `password`.
+
+> Limits: uploaded attachments and any edits live only on that warm instance and
+> reset on cold start. For a persistent system use the external-MySQL + S3 setup below.
+
+---
+
 ## What's already in the repo
 
 - `vercel.json` — uses `vercel-php@0.7.4`, builds the Vite assets (`npm run build` → `public/build`), serves static files from `public/`, and rewrites everything else to the PHP function.
