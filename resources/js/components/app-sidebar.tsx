@@ -125,7 +125,7 @@ export function AppSidebar() {
                                     <ShieldCheck className="size-5" />
                                 </div>
                                 <div className="grid flex-1 text-left leading-tight">
-                                    <span className="truncate font-semibold">GovFile</span>
+                                    <span className="truncate font-semibold">CICC</span>
                                     <span className="text-sidebar-foreground/70 truncate text-xs">Storage System</span>
                                 </div>
                             </Link>

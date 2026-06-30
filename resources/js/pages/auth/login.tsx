@@ -34,7 +34,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
 
     return (
         <>
-            <Head title="Sign in — GovFile Storage System" />
+            <Head title="Sign in — CICC Storage System" />
 
             <div className="grid min-h-screen lg:grid-cols-2">
                 {/* Brand panel */}
@@ -49,7 +49,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                             <ShieldCheck className="size-6" />
                         </div>
                         <div>
-                            <p className="text-lg font-semibold tracking-tight">GovFile Storage System</p>
+                            <p className="text-lg font-semibold tracking-tight">CICC Storage System</p>
                             <p className="text-xs text-white/60">Secure Document Storage and Tracking</p>
                         </div>
                     </div>
@@ -78,7 +78,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                                 <ShieldCheck className="size-6" />
                             </div>
                             <div>
-                                <p className="font-semibold">GovFile Storage System</p>
+                                <p className="font-semibold">CICC Storage System</p>
                                 <p className="text-muted-foreground text-xs">Secure Document Storage and Tracking</p>
                             </div>
                         </div>

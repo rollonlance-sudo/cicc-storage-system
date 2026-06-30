@@ -6,7 +6,7 @@ Use this to set up, verify, and QA the General Setup → Document Types feature.
 
 - [ ] `composer install` and `npm install` completed
 - [ ] `spatie/laravel-permission` installed and config/migration published
-- [ ] `.env` configured (MySQL `storage_system`, or SQLite fallback), `APP_NAME="Storage System"`
+- [ ] `.env` configured (MySQL `storage_system`, or SQLite fallback), `APP_NAME="CICC Storage System"`
 - [ ] `php artisan migrate:fresh --seed` runs without errors
 - [ ] `npm run build` (or `npm run dev`) succeeds
 

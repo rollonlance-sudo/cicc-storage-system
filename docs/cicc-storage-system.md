@@ -1,4 +1,4 @@
-# GovFile Storage System — System Documentation
+# CICC Storage System — System Documentation
 
 A government-office-style internal **document records management system**: register
 official papers, classify and route them, track them by an official tracking
@@ -83,7 +83,7 @@ Gates are shared to the frontend in `HandleInertiaRequests` as `auth.can.*`
 - **document_types** — `code` (unique abbreviation), `name`, `document_category_id`, `description`, `is_active`, `sort_order`, soft-deletes.
 - **document_categories** — `name` (unique), `slug`, `description`, `is_active`, `sort_order`, soft-deletes.
 - **departments** — `code` (unique), `name`, `head_of_office`, `email`, `contact_number`, `is_active`, `sort_order`, soft-deletes.
-- **documents** (the file records) — `tracking_no` (unique, auto `GF-{year}-{CODE}-{seq}`), `reference_no` (unique), `title`, `document_type_id`, `department_id`, `description`, `status`, `classification`, `priority`, `tags` (json), `document_date`, `amount`, `prepared_by`, soft-deletes.
+- **documents** (the file records) — `tracking_no` (unique, auto `CICC-{year}-{CODE}-{seq}`), `reference_no` (unique), `title`, `document_type_id`, `department_id`, `description`, `status`, `classification`, `priority`, `tags` (json), `document_date`, `amount`, `prepared_by`, soft-deletes.
 - **document_attachments** — `document_id`, `original_name`, `path`, `mime_type`, `size`, `uploaded_by`, `download_count`.
 - **document_versions** — `document_id`, `version_no`, `changed_by`, `summary`, `snapshot` (json).
 - **activity_logs** — `document_id`, `user_id`, `action`, `description`, `properties` (json).

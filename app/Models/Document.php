@@ -51,14 +51,14 @@ class Document extends Model
         ];
     }
 
-    /** Generate the next unique official tracking number for a type: GF-{year}-{CODE}-{seq}. */
+    /** Generate the next unique official tracking number for a type: CICC-{year}-{CODE}-{seq}. */
     public static function nextTrackingNo(DocumentType $type): string
     {
         $year = now()->format('Y');
         $seq = static::withTrashed()->where('document_type_id', $type->id)->count() + 1;
 
         do {
-            $candidate = sprintf('GF-%s-%s-%04d', $year, $type->code, $seq);
+            $candidate = sprintf('CICC-%s-%s-%04d', $year, $type->code, $seq);
             $seq++;
         } while (static::withTrashed()->where('tracking_no', $candidate)->exists());
 

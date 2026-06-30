@@ -66,7 +66,7 @@ class RecordTest extends TestCase
 
         $doc = Document::where('reference_no', 'PR-2026-9001')->first();
         $this->assertNotNull($doc);
-        $this->assertStringStartsWith('GF-', $doc->tracking_no);
+        $this->assertStringStartsWith('CICC-', $doc->tracking_no);
         $this->assertSame(['fy2026', 'procurement'], $doc->tags);
     }
 

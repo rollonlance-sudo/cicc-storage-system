@@ -61,7 +61,7 @@ class MockDocumentSeeder extends Seeder
                 $date = Carbon::now()->subDays(random_int(0, 360));
 
                 Document::create([
-                    'tracking_no' => sprintf('GF-%s-%s-%04d', $year, $type->code, $i),
+                    'tracking_no' => sprintf('CICC-%s-%s-%04d', $year, $type->code, $i),
                     'document_type_id' => $type->id,
                     'department_id' => $departmentIds ? $departmentIds[array_rand($departmentIds)] : null,
                     'reference_no' => sprintf('%s-%s-%04d', $type->code, $date->format('Y'), $i),
