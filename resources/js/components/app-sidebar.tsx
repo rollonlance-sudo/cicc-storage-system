@@ -28,7 +28,6 @@ import {
     ListChecks,
     Lock,
     LogOut,
-    ShieldCheck,
     Upload,
     UserCog,
     Users,
@@ -121,9 +120,7 @@ export function AppSidebar() {
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" asChild>
                             <Link href="/dashboard" prefetch>
-                                <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                                    <ShieldCheck className="size-5" />
-                                </div>
+                                <img src="/images/cicc-logo.png" alt="CICC" className="size-8 shrink-0 object-contain" />
                                 <div className="grid flex-1 text-left leading-tight">
                                     <span className="truncate font-semibold">CICC</span>
                                     <span className="text-sidebar-foreground/70 truncate text-xs">Storage System</span>

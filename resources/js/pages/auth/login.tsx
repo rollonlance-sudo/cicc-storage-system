@@ -45,9 +45,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                         aria-hidden
                     />
                     <div className="relative flex items-center gap-3">
-                        <div className="flex size-11 items-center justify-center rounded-xl bg-amber-400 text-[hsl(222,47%,13%)]">
-                            <ShieldCheck className="size-6" />
-                        </div>
+                        <img src="/images/cicc-logo.png" alt="CICC" className="size-12 shrink-0 object-contain" />
                         <div>
                             <p className="text-lg font-semibold tracking-tight">CICC Storage System</p>
                             <p className="text-xs text-white/60">Secure Document Storage and Tracking</p>
@@ -74,9 +72,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                 <div className="bg-background flex items-center justify-center p-6 sm:p-10">
                     <div className="w-full max-w-sm">
                         <div className="mb-8 flex items-center gap-3 lg:hidden">
-                            <div className="bg-primary text-primary-foreground flex size-10 items-center justify-center rounded-xl">
-                                <ShieldCheck className="size-6" />
-                            </div>
+                            <img src="/images/cicc-logo.png" alt="CICC" className="size-10 shrink-0 object-contain" />
                             <div>
                                 <p className="font-semibold">CICC Storage System</p>
                                 <p className="text-muted-foreground text-xs">Secure Document Storage and Tracking</p>
