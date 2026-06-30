@@ -12,14 +12,7 @@ class DocumentController extends Controller
 {
     public function store(DocumentRequest $request, DocumentType $documentType): RedirectResponse
     {
-        $data = $request->validated();
-
-        // Auto-generate an official tracking number when one isn't supplied.
-        if (empty($data['tracking_no'])) {
-            $data['tracking_no'] = Document::nextTrackingNo($documentType);
-        }
-
-        $documentType->documents()->create($data);
+        $documentType->documents()->create($request->validated());
 
         return back()->with('success', 'Document record created.');
     }

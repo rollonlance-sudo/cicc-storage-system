@@ -24,7 +24,7 @@ class DocumentRequest extends FormRequest
 
         return [
             'tracking_no' => [
-                'nullable', 'string', 'max:100',
+                'required', 'string', 'max:100',
                 Rule::unique('documents', 'tracking_no')->ignore($id)->withoutTrashed(),
             ],
             'reference_no' => [

@@ -88,8 +88,8 @@ export default function RecordForm({ record, options }: Props) {
     const selectedDept = options.departments.find((d) => String(d.id) === data.department_id);
 
     // Simple completion meter.
-    const requiredFilled = [data.document_type_id, data.reference_no, data.title].filter(Boolean).length;
-    const completion = Math.round((requiredFilled / 3) * 100);
+    const requiredFields = [data.document_type_id, data.tracking_no, data.reference_no, data.title];
+    const completion = Math.round((requiredFields.filter(Boolean).length / requiredFields.length) * 100);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -127,8 +127,8 @@ export default function RecordForm({ record, options }: Props) {
                                     <InputError message={errors.reference_no} />
                                 </div>
                                 <div className="grid gap-2">
-                                    <Label htmlFor="tracking_no">Official Tracking Number</Label>
-                                    <Input id="tracking_no" value={data.tracking_no} onChange={(e) => setData('tracking_no', e.target.value)} placeholder="auto-generated if blank" />
+                                    <Label htmlFor="tracking_no">Official Tracking Number *</Label>
+                                    <Input id="tracking_no" value={data.tracking_no} onChange={(e) => setData('tracking_no', e.target.value)} placeholder="e.g. CICC-2026-PR-0001" />
                                     <InputError message={errors.tracking_no} />
                                 </div>
                             </div>
@@ -229,7 +229,7 @@ export default function RecordForm({ record, options }: Props) {
                                 </div>
                                 <div className="flex items-center justify-between gap-2">
                                     <dt className="text-muted-foreground">Tracking</dt>
-                                    <dd className="font-mono text-xs">{data.tracking_no || (isEdit ? '—' : 'auto')}</dd>
+                                    <dd className="font-mono text-xs">{data.tracking_no || '—'}</dd>
                                 </div>
                                 <div className="flex items-center justify-between gap-2">
                                     <dt className="text-muted-foreground">Department</dt>
@@ -273,7 +273,7 @@ export default function RecordForm({ record, options }: Props) {
                         <Card className="text-muted-foreground p-5 text-xs">
                             <div className="mb-2 flex items-center gap-2 font-medium text-foreground"><ShieldCheck className="size-4" />Tips</div>
                             <ul className="list-inside list-disc space-y-1">
-                                <li>Leave the tracking number blank to auto-generate an official number.</li>
+                                <li>Enter the official tracking number printed on the source document.</li>
                                 <li>Set the classification accurately — confidential files are access-controlled.</li>
                                 <li>Use tags to group related files for faster search.</li>
                             </ul>

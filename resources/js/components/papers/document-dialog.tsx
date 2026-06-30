@@ -102,14 +102,14 @@ export function DocumentDialog({ open, onOpenChange, typeCode, document, departm
                     <DialogHeader>
                         <DialogTitle>{isEdit ? 'Edit Document Record' : 'Create Document Record'}</DialogTitle>
                         <DialogDescription>
-                            {isEdit ? `Update this ${typeCode} record.` : `Add a new ${typeCode} record. Leave the tracking no. blank to auto-generate.`}
+                            {isEdit ? `Update this ${typeCode} record.` : `Add a new ${typeCode} record.`}
                         </DialogDescription>
                     </DialogHeader>
 
                     <div className="grid gap-4 sm:grid-cols-2">
                         <div className="grid gap-2">
-                            <Label htmlFor="tracking_no">Official Tracking Number</Label>
-                            <Input id="tracking_no" value={data.tracking_no} onChange={(e) => setData('tracking_no', e.target.value)} placeholder="auto-generated" />
+                            <Label htmlFor="tracking_no">Official Tracking Number *</Label>
+                            <Input id="tracking_no" value={data.tracking_no} onChange={(e) => setData('tracking_no', e.target.value)} placeholder="e.g. CICC-2026-PR-0001" />
                             <InputError message={errors.tracking_no} />
                         </div>
                         <div className="grid gap-2">

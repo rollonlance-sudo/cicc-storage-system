@@ -46,7 +46,7 @@ class RecordTest extends TestCase
         $this->actingAs($this->user('manager'))->get(route('records.create'))->assertOk();
     }
 
-    public function test_store_creates_record_and_autogenerates_tracking_number(): void
+    public function test_store_creates_record_with_tracking_number(): void
     {
         $type = DocumentType::factory()->create(['code' => 'PR']);
         $dept = Department::factory()->create();
@@ -54,6 +54,7 @@ class RecordTest extends TestCase
         $this->actingAs($this->user('manager'))
             ->post(route('records.store'), [
                 'document_type_id' => $type->id,
+                'tracking_no' => 'CICC-2026-PR-9001',
                 'reference_no' => 'PR-2026-9001',
                 'title' => 'Purchase of laptops',
                 'department_id' => $dept->id,
@@ -66,7 +67,7 @@ class RecordTest extends TestCase
 
         $doc = Document::where('reference_no', 'PR-2026-9001')->first();
         $this->assertNotNull($doc);
-        $this->assertStringStartsWith('CICC-', $doc->tracking_no);
+        $this->assertSame('CICC-2026-PR-9001', $doc->tracking_no);
         $this->assertSame(['fy2026', 'procurement'], $doc->tags);
     }
 
@@ -75,7 +76,7 @@ class RecordTest extends TestCase
         $this->actingAs($this->user('manager'))
             ->from(route('records.create'))
             ->post(route('records.store'), ['title' => ''])
-            ->assertSessionHasErrors(['document_type_id', 'reference_no', 'title', 'status', 'classification', 'priority']);
+            ->assertSessionHasErrors(['document_type_id', 'tracking_no', 'reference_no', 'title', 'status', 'classification', 'priority']);
     }
 
     public function test_show_and_update_record(): void
@@ -87,6 +88,7 @@ class RecordTest extends TestCase
         $this->actingAs($this->user('manager'))
             ->patch(route('records.update', $doc), [
                 'document_type_id' => $doc->document_type_id,
+                'tracking_no' => $doc->tracking_no,
                 'reference_no' => $doc->reference_no,
                 'title' => 'Updated title',
                 'status' => 'approved',

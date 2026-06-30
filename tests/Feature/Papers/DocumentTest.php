@@ -91,6 +91,7 @@ class DocumentTest extends TestCase
         // Valid creates the record under the right type.
         $this->actingAs($manager)
             ->post(route('documents.store', $type->code), [
+                'tracking_no' => 'CICC-2026-PR-0002',
                 'reference_no' => 'PR-2026-0002',
                 'title' => 'Purchase of supplies',
                 'status' => 'pending',
@@ -101,13 +102,11 @@ class DocumentTest extends TestCase
             ->assertSessionHasNoErrors();
 
         $this->assertDatabaseHas('documents', [
+            'tracking_no' => 'CICC-2026-PR-0002',
             'reference_no' => 'PR-2026-0002',
             'document_type_id' => $type->id,
             'status' => 'pending',
         ]);
-
-        // Tracking number is auto-generated when left blank.
-        $this->assertNotNull(Document::where('reference_no', 'PR-2026-0002')->first()->tracking_no);
     }
 
     public function test_user_without_permission_cannot_create_documents(): void

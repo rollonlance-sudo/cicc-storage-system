@@ -56,14 +56,7 @@ class RecordController extends Controller
 
     public function store(DocumentRequest $request): RedirectResponse
     {
-        $data = $request->validated();
-        $type = DocumentType::findOrFail($data['document_type_id']);
-
-        if (empty($data['tracking_no'])) {
-            $data['tracking_no'] = Document::nextTrackingNo($type);
-        }
-
-        $document = Document::create($data);
+        $document = Document::create($request->validated());
 
         return redirect()->route('records.show', $document)->with('success', 'Document record created.');
     }

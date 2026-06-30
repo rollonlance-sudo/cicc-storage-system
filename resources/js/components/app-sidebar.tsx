@@ -91,7 +91,35 @@ export function AppSidebar() {
     const role = auth.roles?.[0];
 
     const visible = (item: NavLink) => !item.gate || can[item.gate];
-    const isActive = (url?: string) => !!url && (page.url === url || page.url.startsWith(url + '/') || (url !== '/' && page.url.startsWith(url + '?')));
+
+    // Only the single best-matching nav item is active (longest match wins), so e.g.
+    // "/records/create" highlights "Upload File" but NOT "File Records" (/records).
+    const current = page.url;
+    const curPath = current.split('?')[0];
+    const navUrls = sections.flatMap((s) => s.items).map((i) => i.url).filter((u): u is string => !!u);
+    let activeUrl: string | null = null;
+    let bestScore = -1;
+    for (const url of navUrls) {
+        const [p, q] = url.split('?');
+        let score = -1;
+        if (q) {
+            // Query-param items (e.g. ?trashed=1) match only when those params are present.
+            if (curPath === p) {
+                const cur = new URLSearchParams(current.split('?')[1] ?? '');
+                const ok = [...new URLSearchParams(q)].every(([k, v]) => cur.get(k) === v);
+                if (ok) score = p.length + q.length + 1000;
+            }
+        } else if (curPath === p) {
+            score = p.length + 500; // exact path
+        } else if (curPath.startsWith(p + '/')) {
+            score = p.length; // ancestor path
+        }
+        if (score > bestScore) {
+            bestScore = score;
+            activeUrl = url;
+        }
+    }
+    const isActive = (url?: string) => !!url && url === activeUrl;
 
     const renderItems = (items: NavLink[]) =>
         items.filter(visible).map((item) => (
