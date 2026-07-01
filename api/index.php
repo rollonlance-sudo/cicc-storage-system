@@ -2,32 +2,18 @@
 
 /**
  * Vercel serverless entrypoint for the CICC Storage System (Laravel).
- * Includes a temporary diagnostic wrapper that surfaces fatals/exceptions
- * directly (serverless logs aren't reachable from the build tooling).
+ *
+ * Serverless filesystems are read-only except /tmp, so this entrypoint:
+ *  - supplies self-contained demo defaults (works with zero env config),
+ *  - relocates Laravel's writable storage and compiled caches to /tmp,
+ *  - seeds a fresh SQLite database from the bundled demo copy on cold start.
+ * Any variable already set in the Vercel project environment takes precedence.
  */
 
-ini_set('display_errors', '1');
-error_reporting(E_ALL);
-register_shutdown_function(function () {
-    $e = error_get_last();
-    if ($e && in_array($e['type'], [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR], true)) {
-        if (! headers_sent()) {
-            http_response_code(500);
-            header('Content-Type: text/plain');
-        }
-        echo "FATAL: {$e['message']}\n  at {$e['file']}:{$e['line']}\n";
-    }
-});
-
-/*
- * Self-configuring demo defaults. On Vercel there is no .env file, so provide
- * safe defaults for a self-contained SQLite demo. Any value already set in the
- * Vercel project environment takes precedence (except APP_DEBUG, forced on here
- * temporarily for diagnosis).
- */
 $defaults = [
     'APP_NAME' => 'CICC Storage System',
     'APP_ENV' => 'production',
+    'APP_DEBUG' => 'false',
     'APP_KEY' => 'base64:8OITcfJG937RyZuCVUi5gYxDakvXPE5uwryALO7/Y6g=',
     'APP_URL' => 'https://cicc-storage-system-six.vercel.app',
     'LOG_CHANNEL' => 'stderr',
@@ -38,8 +24,7 @@ $defaults = [
     'QUEUE_CONNECTION' => 'sync',
     'FILESYSTEM_DISK' => 'local',
     'BCRYPT_ROUNDS' => '10',
-    // Serverless FS is read-only except /tmp — relocate Laravel's compiled caches
-    // so bootstrap (service/package manifests) can be written at runtime.
+    // Read-only bootstrap/cache on serverless — relocate compiled caches to /tmp.
     'APP_SERVICES_CACHE' => '/tmp/cache/services.php',
     'APP_PACKAGES_CACHE' => '/tmp/cache/packages.php',
     'APP_CONFIG_CACHE' => '/tmp/cache/config.php',
@@ -53,8 +38,6 @@ foreach ($defaults as $k => $v) {
         $_SERVER[$k] = $v;
     }
 }
-putenv('APP_DEBUG=true');
-$_ENV['APP_DEBUG'] = $_SERVER['APP_DEBUG'] = 'true';
 
 $storage = '/tmp/storage';
 foreach ([
@@ -77,14 +60,4 @@ if (! file_exists($live) && file_exists($demo)) {
     @copy($demo, $live);
 }
 
-try {
-    require __DIR__.'/../public/index.php';
-} catch (\Throwable $ex) {
-    if (! headers_sent()) {
-        http_response_code(500);
-        header('Content-Type: text/plain');
-    }
-    echo 'EXCEPTION: '.get_class($ex).': '.$ex->getMessage()."\n";
-    echo '  at '.$ex->getFile().':'.$ex->getLine()."\n\n";
-    echo $ex->getTraceAsString()."\n";
-}
+require __DIR__.'/../public/index.php';
