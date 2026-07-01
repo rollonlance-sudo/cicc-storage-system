@@ -2,11 +2,22 @@
 
 /**
  * Vercel serverless entrypoint for the CICC Storage System (Laravel).
- *
- * Vercel's filesystem is read-only except for /tmp, so Laravel's writable
- * storage is redirected to /tmp/storage (see bootstrap/app.php). The runtime
- * directories are created here on each cold start before the framework boots.
+ * Includes a temporary diagnostic wrapper that surfaces fatals/exceptions
+ * directly (serverless logs aren't reachable from the build tooling).
  */
+
+ini_set('display_errors', '1');
+error_reporting(E_ALL);
+register_shutdown_function(function () {
+    $e = error_get_last();
+    if ($e && in_array($e['type'], [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR], true)) {
+        if (! headers_sent()) {
+            http_response_code(500);
+            header('Content-Type: text/plain');
+        }
+        echo "FATAL: {$e['message']}\n  at {$e['file']}:{$e['line']}\n";
+    }
+});
 
 /*
  * Self-configuring demo defaults. On Vercel there is no .env file, so provide
@@ -35,7 +46,6 @@ foreach ($defaults as $k => $v) {
         $_SERVER[$k] = $v;
     }
 }
-// TEMP: surface boot errors while stabilizing the deploy.
 putenv('APP_DEBUG=true');
 $_ENV['APP_DEBUG'] = $_SERVER['APP_DEBUG'] = 'true';
 
@@ -53,16 +63,20 @@ foreach ([
     }
 }
 
-/*
- * Self-contained demo database: on a read-only serverless filesystem, copy the
- * bundled, pre-seeded SQLite file into the writable /tmp on cold start. Set
- * DB_CONNECTION=sqlite and DB_DATABASE=/tmp/database.sqlite in the Vercel env.
- * Writes work per-instance and reset on the next cold start (fine for a demo).
- */
 $demo = __DIR__.'/../database/demo.sqlite';
 $live = '/tmp/database.sqlite';
 if (! file_exists($live) && file_exists($demo)) {
     @copy($demo, $live);
 }
 
-require __DIR__.'/../public/index.php';
+try {
+    require __DIR__.'/../public/index.php';
+} catch (\Throwable $ex) {
+    if (! headers_sent()) {
+        http_response_code(500);
+        header('Content-Type: text/plain');
+    }
+    echo 'EXCEPTION: '.get_class($ex).': '.$ex->getMessage()."\n";
+    echo '  at '.$ex->getFile().':'.$ex->getLine()."\n\n";
+    echo $ex->getTraceAsString()."\n";
+}
