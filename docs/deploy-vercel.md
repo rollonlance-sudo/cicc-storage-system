@@ -7,34 +7,31 @@
 > attachments). Cold starts and the 250 MB function limit apply. For a simpler,
 > fully-supported deploy, prefer Railway, Render, Fly.io, or Laravel Cloud.
 
+## Live demo
+
+Deployed self-contained (no external DB/S3): **https://cicc-storage-system-six.vercel.app**
+(`admin@storagesystem.test` / `password`).
+
 ## Quickest path — self-contained demo (no external DB/S3) ⭐
 
-For a **view-only demo**, the repo ships a pre-seeded SQLite database
-(`database/demo.sqlite`). `api/index.php` copies it to the writable `/tmp` on
-each cold start, so the app runs on Vercel with **no external services**. Writes
-work per-instance and reset on the next cold start — perfect for viewing.
+For a **view-only demo**, everything is baked in and **no environment variables
+are required**:
+- `database/demo.sqlite` (committed, pre-seeded) is copied to the writable `/tmp`
+  on each cold start.
+- `api/index.php` supplies demo defaults (APP_KEY, `DB=sqlite` at `/tmp`,
+  `SESSION=cookie`, `CACHE=array`) and relocates Laravel's storage **and compiled
+  caches** to `/tmp` (a read-only `bootstrap/cache` on serverless otherwise breaks
+  service resolution — "Target class [view] does not exist").
+- `public/build` is committed so the Vite manifest ships with the function.
 
-1. **Import the repo** at vercel.com → *Add New → Project* → import
-   `rollonlance-sudo/cicc-storage-system` (the public copy). Framework preset: **Other**.
-2. **Add these Environment Variables** (Production):
+**Deploy:** vercel.com → *Add New → Project* → import
+`rollonlance-sudo/cicc-storage-system` → Framework preset **Other** → **Deploy**.
+Pushes to the repo's `main` auto-redeploy.
 
-   ```
-   APP_KEY=base64:8OITcfJG937RyZuCVUi5gYxDakvXPE5uwryALO7/Y6g=
-   APP_ENV=production
-   APP_DEBUG=false
-   LOG_CHANNEL=stderr
-   DB_CONNECTION=sqlite
-   DB_DATABASE=/tmp/database.sqlite
-   SESSION_DRIVER=cookie
-   CACHE_STORE=array
-   QUEUE_CONNECTION=sync
-   FILESYSTEM_DISK=local
-   ```
-   (Regenerate APP_KEY anytime with `php artisan key:generate --show`.)
-3. **Deploy.** Log in as `admin@storagesystem.test` / `password`.
-
-> Limits: uploaded attachments and any edits live only on that warm instance and
-> reset on cold start. For a persistent system use the external-MySQL + S3 setup below.
+> Limits: uploaded attachments and any edits live only on the warm instance and
+> reset on cold start. To override a default (e.g. a real APP_KEY or a persistent
+> database), set it in the Vercel project env — it takes precedence. For a
+> persistent system use the external-MySQL + S3 setup below.
 
 ---
 
