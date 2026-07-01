@@ -38,6 +38,13 @@ $defaults = [
     'QUEUE_CONNECTION' => 'sync',
     'FILESYSTEM_DISK' => 'local',
     'BCRYPT_ROUNDS' => '10',
+    // Serverless FS is read-only except /tmp — relocate Laravel's compiled caches
+    // so bootstrap (service/package manifests) can be written at runtime.
+    'APP_SERVICES_CACHE' => '/tmp/cache/services.php',
+    'APP_PACKAGES_CACHE' => '/tmp/cache/packages.php',
+    'APP_CONFIG_CACHE' => '/tmp/cache/config.php',
+    'APP_ROUTES_CACHE' => '/tmp/cache/routes.php',
+    'APP_EVENTS_CACHE' => '/tmp/cache/events.php',
 ];
 foreach ($defaults as $k => $v) {
     if (getenv($k) === false && ! isset($_ENV[$k]) && ! isset($_SERVER[$k])) {
@@ -51,6 +58,7 @@ $_ENV['APP_DEBUG'] = $_SERVER['APP_DEBUG'] = 'true';
 
 $storage = '/tmp/storage';
 foreach ([
+    '/tmp/cache',
     $storage.'/app/public',
     $storage.'/framework/cache/data',
     $storage.'/framework/sessions',
